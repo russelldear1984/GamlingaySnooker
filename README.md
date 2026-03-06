@@ -6,11 +6,13 @@ Responsive web application for managing and viewing snooker tournament schedules
 
 - Public pages:
   - `/` (and `/home`) landing page
+  - `/home` landing page
   - `/schedule` chronological tournament schedule
 - Admin pages:
   - `/admin/login` (6-digit code)
   - `/admin/dashboard`
   - `/admin/matches` create/edit/delete matches and add/edit/delete players
+  - `/admin/matches` create/edit/delete and assign players/tables/times
   - `/admin/opening-hours` configure open/closed days and hours
 - Scheduling validation:
   - no booking outside opening hours
@@ -21,6 +23,7 @@ Responsive web application for managing and viewing snooker tournament schedules
   - `tables`
   - `matches`
   - `opening_hours`
+- Seed data for players, tables, matches, and opening hours
 
 ## Stack
 
@@ -28,6 +31,7 @@ Responsive web application for managing and viewing snooker tournament schedules
 - TailwindCSS
 - React Router (HashRouter for refresh-safe GitHub Pages routes)
 - Supabase
+- React Router
 - Google Fonts + Material Symbols
 
 ## Setup
@@ -47,6 +51,16 @@ Responsive web application for managing and viewing snooker tournament schedules
    npm run dev
    ```
 5. Build production bundle:
+2. Configure admin access code:
+   ```bash
+   cp .env.example .env
+   ```
+   Then edit `VITE_ADMIN_CODE` in `.env`.
+3. Run development server:
+   ```bash
+   npm run dev
+   ```
+4. Build production bundle:
    ```bash
    npm run build
    ```
