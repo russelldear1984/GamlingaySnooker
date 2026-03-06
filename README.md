@@ -52,21 +52,6 @@ This project is configured with a Vite `base` of `/GamlingaySnooker/` so the roo
 
 - `https://russelldear1984.github.io/GamlingaySnooker/`
 
-
-### Routing note for GitHub Pages
-
-For project pages, the valid base URL is:
-
-- `https://russelldear1984.github.io/GamlingaySnooker/`
-
-So the home route is:
-
-- `https://russelldear1984.github.io/GamlingaySnooker/home`
-
-`https://russelldear1984.github.io/home` is a different site root and will return 404 unless that root site is separately configured.
-
-A `404.html` SPA fallback redirect is included so deep links under `/GamlingaySnooker/*` load correctly.
-
 ## Admin Code
 
 The configurable admin code is read from:
