@@ -4,6 +4,18 @@
     <meta charset="utf-8" />
     <title>Redirecting…</title>
     <script>
+      (function () {
+        var path = window.location.pathname;
+        var search = window.location.search || '';
+        var hash = window.location.hash || '';
+        var configuredBase = '/GamlingaySnooker';
+        var usesProjectBase = path === configuredBase || path.indexOf(configuredBase + '/') === 0;
+        var projectBase = usesProjectBase ? configuredBase : '';
+        var relativePath = projectBase ? path.slice(projectBase.length) : path;
+
+        var target = projectBase + '/?p=' + encodeURIComponent(relativePath + search + hash);
+        window.location.replace(target);
+      })();
       // GitHub Pages SPA fallback redirect (project pages)
       const path = window.location.pathname;
       const search = window.location.search || '';

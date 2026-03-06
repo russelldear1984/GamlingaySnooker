@@ -17,6 +17,13 @@ export const MatchForm = ({ players, tables, onSubmit, initialValue, submitText 
 
   const playerOptions = useMemo(() => players.map((p) => ({ value: p.id, label: p.name })), [players]);
 
+  const [isSaving, setIsSaving] = useState(false);
+
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+    setIsSaving(true);
+    const result = await onSubmit(draft);
+    setIsSaving(false);
   const handleSubmit = (event) => {
     event.preventDefault();
     const result = onSubmit(draft);
@@ -81,6 +88,7 @@ export const MatchForm = ({ players, tables, onSubmit, initialValue, submitText 
           <input type="time" className="field" value={draft.endTime} onChange={(e) => setValue('endTime', e.target.value)} />
         </div>
       </div>
+      <button className="btn-primary w-full sm:w-auto" type="submit" disabled={isSaving}>{isSaving ? 'Saving...' : submitText}</button>
       <button className="btn-primary w-full sm:w-auto" type="submit">{submitText}</button>
     </form>
   );

@@ -1,3 +1,4 @@
+export const initialPlayers = [
 export const players = [
   { id: 'p1', name: 'Alex Morgan' },
   { id: 'p2', name: 'Jamie Clarke' },

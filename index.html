@@ -10,6 +10,21 @@
       rel="stylesheet"
       href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0"
     />
+    <script>
+      // Restore deep links redirected by public/404.html when hosted on GitHub Pages.
+      (function () {
+        const params = new URLSearchParams(window.location.search);
+        const redirectedPath = params.get('p');
+        if (!redirectedPath) return;
+
+        const configuredBase = '/GamlingaySnooker';
+        const currentPath = window.location.pathname;
+        const usesProjectBase = currentPath === `${configuredBase}/` || currentPath === configuredBase;
+        const projectBase = usesProjectBase ? configuredBase : '';
+        const cleanPath = redirectedPath.startsWith('/') ? redirectedPath : `/${redirectedPath}`;
+        window.history.replaceState(null, '', `${projectBase}${cleanPath}`);
+      })();
+    </script>
     <title>Gamlingay Snooker Club</title>
   </head>
   <body class="bg-slate-950">
