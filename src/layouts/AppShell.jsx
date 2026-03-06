@@ -1,7 +1,7 @@
 import { Link, NavLink } from 'react-router-dom';
 
 const navItems = [
-  { to: '/home', label: 'Home' },
+  { to: '/', label: 'Home' },
   { to: '/schedule', label: 'Schedule' },
   { to: '/admin/dashboard', label: 'Admin' }
 ];
@@ -11,7 +11,7 @@ export const AppShell = ({ children }) => {
     <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 text-slate-100">
       <header className="border-b border-slate-800/80 bg-slate-950/80 backdrop-blur">
         <div className="mx-auto flex w-full max-w-6xl items-center justify-between px-4 py-3 md:px-6">
-          <Link to="/home" className="text-lg font-bold text-teal-400">
+          <Link to="/" className="text-lg font-bold text-teal-400">
             Gamlingay Snooker Club
           </Link>
           <nav className="flex items-center gap-2">

@@ -45,6 +45,13 @@ Responsive web application for managing and viewing snooker tournament schedules
    npm run build
    ```
 
+
+## GitHub Pages
+
+This project is configured with a Vite `base` of `/GamlingaySnooker/` so the root route (`/`) renders correctly when hosted at:
+
+- `https://russelldear1984.github.io/GamlingaySnooker/`
+
 ## Admin Code
 
 The configurable admin code is read from:

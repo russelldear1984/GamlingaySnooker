@@ -1,4 +1,4 @@
-import { Navigate, Route, Routes } from 'react-router-dom';
+import { Route, Routes } from 'react-router-dom';
 import { ProtectedRoute } from './components/ProtectedRoute';
 import { AppShell } from './layouts/AppShell';
 import { AdminDashboardPage } from './pages/AdminDashboardPage';
@@ -12,7 +12,7 @@ export default function App() {
   return (
     <AppShell>
       <Routes>
-        <Route path="/" element={<Navigate to="/home" replace />} />
+        <Route path="/" element={<HomePage />} />
         <Route path="/home" element={<HomePage />} />
         <Route path="/schedule" element={<SchedulePage />} />
         <Route path="/admin/login" element={<AdminLoginPage />} />
@@ -40,6 +40,7 @@ export default function App() {
             </ProtectedRoute>
           }
         />
+        <Route path="*" element={<HomePage />} />
       </Routes>
     </AppShell>
   );
