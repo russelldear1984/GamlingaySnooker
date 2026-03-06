@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useApp } from '../context/AppContext';
 
-const ADMIN_CODE = import.meta.env.VITE_ADMIN_CODE || '123456';
+const ADMIN_CODE = import.meta.env.VITE_ADMIN_CODE || '246802';
 
 export const AdminLoginPage = () => {
   const [code, setCode] = useState('');
