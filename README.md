@@ -5,12 +5,12 @@ Responsive web application for managing and viewing snooker tournament schedules
 ## Features
 
 - Public pages:
-  - `/` (and `/home`) landing page
+  - `/home` landing page
   - `/schedule` chronological tournament schedule
 - Admin pages:
   - `/admin/login` (6-digit code)
   - `/admin/dashboard`
-  - `/admin/matches` create/edit/delete matches and add/edit/delete players
+  - `/admin/matches` create/edit/delete and assign players/tables/times
   - `/admin/opening-hours` configure open/closed days and hours
 - Scheduling validation:
   - no booking outside opening hours
@@ -51,21 +51,6 @@ Responsive web application for managing and viewing snooker tournament schedules
 This project is configured with a Vite `base` of `/GamlingaySnooker/` so the root route (`/`) renders correctly when hosted at:
 
 - `https://russelldear1984.github.io/GamlingaySnooker/`
-
-
-### Routing note for GitHub Pages
-
-For project pages, the valid base URL is:
-
-- `https://russelldear1984.github.io/GamlingaySnooker/`
-
-So the home route is:
-
-- `https://russelldear1984.github.io/GamlingaySnooker/home`
-
-`https://russelldear1984.github.io/home` is a different site root and will return 404 unless that root site is separately configured.
-
-A `public/404.html` SPA fallback redirect is included so deep links load correctly after page refresh. The fallback script supports both project-path deploys (`/GamlingaySnooker/*`) and root-path deploys (`/*`).
 
 ## Admin Code
 
