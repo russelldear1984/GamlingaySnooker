@@ -36,9 +36,20 @@ export const AppProvider = ({ children }) => {
   const sortedMatches = useMemo(() => [...matches].sort(compareMatches), [matches]);
 
   const refreshMatches = async () => {
-    const loadedMatches = await supabaseRest.select('matches', { orderBy: 'date' });
-    setMatches((loadedMatches || []).map(normalizeMatch));
-    return loadedMatches || [];
+    const rows = await supabaseRest.select('matches', { orderBy: 'date' });
+    setMatches((rows || []).map(normalizeMatch));
+    return rows || [];
+  };
+
+  const refreshOpeningHours = async () => {
+    const rows = await supabaseRest.select('opening_hours', { orderBy: 'day_of_week' });
+    setOpeningHours((rows || []).map((day) => ({
+      dayOfWeek: day.dayOfWeek ?? day.day_of_week,
+      isOpen: day.isOpen ?? day.is_open,
+      openTime: day.openTime ?? day.open_time,
+      closeTime: day.closeTime ?? day.close_time
+    })));
+    return rows || [];
   };
 
   useEffect(() => {
@@ -176,20 +187,8 @@ export const AppProvider = ({ children }) => {
     };
 
     try {
-      const rows = await supabaseRest.updateEq('opening_hours', 'day_of_week', dayOfWeek, payload);
-      const updated = rows[0];
-      setOpeningHours((prev) =>
-        prev.map((day) =>
-          day.dayOfWeek === dayOfWeek
-            ? {
-                dayOfWeek: updated.day_of_week,
-                isOpen: updated.is_open,
-                openTime: updated.open_time,
-                closeTime: updated.close_time
-              }
-            : day
-        )
-      );
+      await supabaseRest.updateEq('opening_hours', 'day_of_week', dayOfWeek, payload);
+      await refreshOpeningHours();
       return { ok: true };
     } catch (error) {
       return { ok: false, error: error.message || 'Unable to update opening hours.' };
