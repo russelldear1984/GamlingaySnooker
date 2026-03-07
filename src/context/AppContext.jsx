@@ -1,10 +1,13 @@
 import { createContext, useContext, useEffect, useMemo, useState } from 'react';
 import {
   initialPlayers,
+  matches as seedMatches,
   openingHours as seedHours,
   tables as seedTables
 } from '../data/seedData';
 import { supabaseRest } from '../lib/supabaseClient';
+import { createContext, useContext, useMemo, useState } from 'react';
+import { matches as seedMatches, openingHours as seedHours, players, tables } from '../data/seedData';
 import { compareMatches } from '../utils/dateUtils';
 import { validateMatch } from '../utils/validation';
 
@@ -21,9 +24,7 @@ const normalizeMatch = (match) => ({
   ...match,
   tableNumber: Number(match.tableNumber ?? match.table_number),
   startTime: match.startTime ?? match.start_time,
-  endTime: match.endTime ?? match.end_time,
-  player1Score: match.player1Score ?? match.player1_score ?? '',
-  player2Score: match.player2Score ?? match.player2_score ?? ''
+  endTime: match.endTime ?? match.end_time
 });
 
 export const AppProvider = ({ children }) => {
@@ -36,23 +37,6 @@ export const AppProvider = ({ children }) => {
   const [errorMessage, setErrorMessage] = useState('');
 
   const sortedMatches = useMemo(() => [...matches].sort(compareMatches), [matches]);
-
-  const refreshMatches = async () => {
-    const rows = await supabaseRest.select('matches', { orderBy: 'date' });
-    setMatches((rows || []).map(normalizeMatch));
-    return rows || [];
-  };
-
-  const refreshOpeningHours = async () => {
-    const rows = await supabaseRest.select('opening_hours', { orderBy: 'day_of_week' });
-    setOpeningHours((rows || []).map((day) => ({
-      dayOfWeek: day.dayOfWeek ?? day.day_of_week,
-      isOpen: day.isOpen ?? day.is_open,
-      openTime: day.openTime ?? day.open_time,
-      closeTime: day.closeTime ?? day.close_time
-    })));
-    return rows || [];
-  };
 
   useEffect(() => {
     const initialize = async () => {
@@ -68,6 +52,21 @@ export const AppProvider = ({ children }) => {
             'table_number'
           ),
           supabaseRest.select('matches', { orderBy: 'date' }),
+          loadOrSeed(
+            'matches',
+            seedMatches.map((match) => ({
+              id: match.id,
+              player1: match.player1,
+              player2: match.player2,
+              table_number: match.tableNumber,
+              round: match.round,
+              date: match.date,
+              start_time: match.startTime,
+              end_time: match.endTime,
+              status: match.status
+            })),
+            'date'
+          ),
           loadOrSeed(
             'opening_hours',
             seedHours.map((day) => ({
@@ -114,18 +113,17 @@ export const AppProvider = ({ children }) => {
       date: draft.date,
       start_time: draft.startTime,
       end_time: draft.endTime,
-      status: draft.status || 'Scheduled',
-      player1_score: draft.player1Score === '' ? null : Number(draft.player1Score),
-      player2_score: draft.player2Score === '' ? null : Number(draft.player2Score)
+      status: draft.status || 'Scheduled'
     };
 
     try {
       if (editMatchId) {
-        await supabaseRest.updateEq('matches', 'id', editMatchId, payload);
+        const rows = await supabaseRest.updateEq('matches', 'id', editMatchId, payload);
+        setMatches((prev) => prev.map((match) => (match.id === editMatchId ? normalizeMatch(rows[0]) : match)));
       } else {
-        await supabaseRest.insert('matches', payload);
+        const rows = await supabaseRest.insert('matches', payload);
+        setMatches((prev) => [...prev, normalizeMatch(rows[0])]);
       }
-      await refreshMatches();
       return { ok: true };
     } catch (error) {
       return { ok: false, error: error.message || 'Unable to save match.' };
@@ -135,7 +133,7 @@ export const AppProvider = ({ children }) => {
   const deleteMatch = async (id) => {
     try {
       await supabaseRest.deleteEq('matches', 'id', id);
-      await refreshMatches();
+      setMatches((prev) => prev.filter((match) => match.id !== id));
       return { ok: true };
     } catch (error) {
       return { ok: false, error: error.message || 'Unable to delete match.' };
@@ -191,12 +189,58 @@ export const AppProvider = ({ children }) => {
     };
 
     try {
-      await supabaseRest.updateEq('opening_hours', 'day_of_week', dayOfWeek, payload);
-      await refreshOpeningHours();
+      const rows = await supabaseRest.updateEq('opening_hours', 'day_of_week', dayOfWeek, payload);
+      const updated = rows[0];
+      setOpeningHours((prev) =>
+        prev.map((day) =>
+          day.dayOfWeek === dayOfWeek
+            ? {
+                dayOfWeek: updated.day_of_week,
+                isOpen: updated.is_open,
+                openTime: updated.open_time,
+                closeTime: updated.close_time
+              }
+            : day
+        )
+      );
       return { ok: true };
     } catch (error) {
       return { ok: false, error: error.message || 'Unable to update opening hours.' };
     }
+export const AppProvider = ({ children }) => {
+  const [matches, setMatches] = useState(seedMatches);
+  const [openingHours, setOpeningHours] = useState(seedHours);
+  const [adminAuthenticated, setAdminAuthenticated] = useState(false);
+
+  const sortedMatches = useMemo(() => [...matches].sort(compareMatches), [matches]);
+
+  const upsertMatch = (draft, editMatchId = null) => {
+    const error = validateMatch({ draft, openingHours, matches, editMatchId });
+    if (error) return { ok: false, error };
+
+    const normalized = {
+      ...draft,
+      id: editMatchId ?? crypto.randomUUID(),
+      tableNumber: Number(draft.tableNumber),
+      status: draft.status || 'Scheduled'
+    };
+
+    setMatches((prev) => {
+      if (editMatchId) {
+        return prev.map((match) => (match.id === editMatchId ? normalized : match));
+      }
+      return [...prev, normalized];
+    });
+
+    return { ok: true };
+  };
+
+  const deleteMatch = (id) => setMatches((prev) => prev.filter((match) => match.id !== id));
+
+  const updateOpeningHour = (dayOfWeek, patch) => {
+    setOpeningHours((prev) =>
+      prev.map((day) => (day.dayOfWeek === dayOfWeek ? { ...day, ...patch } : day))
+    );
   };
 
   const value = {
@@ -213,6 +257,7 @@ export const AppProvider = ({ children }) => {
     updateOpeningHour,
     isLoading,
     errorMessage
+    updateOpeningHour
   };
 
   return <AppContext.Provider value={value}>{children}</AppContext.Provider>;

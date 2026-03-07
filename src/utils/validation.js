@@ -10,21 +10,6 @@ export const validateMatch = ({ draft, openingHours, matches, editMatchId }) => 
     return 'Players must be different.';
   }
 
-  const hasP1Score = draft.player1Score !== undefined && draft.player1Score !== null && draft.player1Score !== '';
-  const hasP2Score = draft.player2Score !== undefined && draft.player2Score !== null && draft.player2Score !== '';
-
-  if (hasP1Score !== hasP2Score) {
-    return 'Enter both scores or leave both empty.';
-  }
-
-  if (hasP1Score && (!Number.isInteger(Number(draft.player1Score)) || Number(draft.player1Score) < 0)) {
-    return 'Player 1 score must be a whole number 0 or higher.';
-  }
-
-  if (hasP2Score && (!Number.isInteger(Number(draft.player2Score)) || Number(draft.player2Score) < 0)) {
-    return 'Player 2 score must be a whole number 0 or higher.';
-  }
-
   const start = toDateTime(draft.date, draft.startTime);
   const end = toDateTime(draft.date, draft.endTime);
 

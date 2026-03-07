@@ -8,13 +8,11 @@ const defaultDraft = {
   date: '',
   startTime: '',
   endTime: '',
-  status: 'Scheduled',
-  player1Score: '',
-  player2Score: ''
+  status: 'Scheduled'
 };
 
 export const MatchForm = ({ players, tables, onSubmit, initialValue, submitText = 'Save match' }) => {
-  const [draft, setDraft] = useState({ ...defaultDraft, ...(initialValue || {}) });
+  const [draft, setDraft] = useState(initialValue || defaultDraft);
   const [error, setError] = useState('');
 
   const playerOptions = useMemo(() => players.map((p) => ({ value: p.id, label: p.name })), [players]);
@@ -26,6 +24,9 @@ export const MatchForm = ({ players, tables, onSubmit, initialValue, submitText 
     setIsSaving(true);
     const result = await onSubmit(draft);
     setIsSaving(false);
+  const handleSubmit = (event) => {
+    event.preventDefault();
+    const result = onSubmit(draft);
     if (!result.ok) {
       setError(result.error);
       return;
@@ -86,30 +87,9 @@ export const MatchForm = ({ players, tables, onSubmit, initialValue, submitText 
           <label className="text-sm">End time</label>
           <input type="time" className="field" value={draft.endTime} onChange={(e) => setValue('endTime', e.target.value)} />
         </div>
-        <div>
-          <label className="text-sm">Player 1 score</label>
-          <input
-            type="number"
-            min="0"
-            className="field"
-            value={draft.player1Score}
-            onChange={(e) => setValue('player1Score', e.target.value)}
-            placeholder="Optional"
-          />
-        </div>
-        <div>
-          <label className="text-sm">Player 2 score</label>
-          <input
-            type="number"
-            min="0"
-            className="field"
-            value={draft.player2Score}
-            onChange={(e) => setValue('player2Score', e.target.value)}
-            placeholder="Optional"
-          />
-        </div>
       </div>
       <button className="btn-primary w-full sm:w-auto" type="submit" disabled={isSaving}>{isSaving ? 'Saving...' : submitText}</button>
+      <button className="btn-primary w-full sm:w-auto" type="submit">{submitText}</button>
     </form>
   );
 };
