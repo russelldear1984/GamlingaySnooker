@@ -27,6 +27,8 @@ export default function App() {
           {errorMessage}
         </div>
       )}
+  return (
+    <AppShell>
       <Routes>
         <Route path="/" element={<HomePage />} />
         <Route path="/home" element={<HomePage />} />

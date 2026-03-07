@@ -36,6 +36,7 @@ export const AdminOpeningHoursPage = () => {
                       type="checkbox"
                       checked={day.isOpen}
                       onChange={(e) => applyUpdate(day.dayOfWeek, { isOpen: e.target.checked })}
+                      onChange={(e) => updateOpeningHour(day.dayOfWeek, { isOpen: e.target.checked })}
                     />
                   </td>
                   <td className="px-4 py-3">
@@ -45,6 +46,7 @@ export const AdminOpeningHoursPage = () => {
                       value={day.openTime}
                       disabled={!day.isOpen}
                       onChange={(e) => applyUpdate(day.dayOfWeek, { openTime: e.target.value })}
+                      onChange={(e) => updateOpeningHour(day.dayOfWeek, { openTime: e.target.value })}
                     />
                   </td>
                   <td className="px-4 py-3">
@@ -54,6 +56,7 @@ export const AdminOpeningHoursPage = () => {
                       value={day.closeTime}
                       disabled={!day.isOpen}
                       onChange={(e) => applyUpdate(day.dayOfWeek, { closeTime: e.target.value })}
+                      onChange={(e) => updateOpeningHour(day.dayOfWeek, { closeTime: e.target.value })}
                     />
                   </td>
                 </tr>
