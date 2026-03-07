@@ -6,11 +6,13 @@ Responsive web application for managing and viewing snooker tournament schedules
 
 - Public pages:
   - `/` (and `/home`) landing page
+  - `/home` landing page
   - `/schedule` chronological tournament schedule
 - Admin pages:
   - `/admin/login` (6-digit code)
   - `/admin/dashboard`
   - `/admin/matches` create/edit/delete matches and add/edit/delete players
+  - `/admin/matches` create/edit/delete and assign players/tables/times
   - `/admin/opening-hours` configure open/closed days and hours
 - Scheduling validation:
   - no booking outside opening hours
@@ -21,6 +23,7 @@ Responsive web application for managing and viewing snooker tournament schedules
   - `tables`
   - `matches`
   - `opening_hours`
+- Seed data for players, tables, matches, and opening hours
 
 ## Stack
 
@@ -28,6 +31,7 @@ Responsive web application for managing and viewing snooker tournament schedules
 - TailwindCSS
 - React Router (HashRouter for refresh-safe GitHub Pages routes)
 - Supabase
+- React Router
 - Google Fonts + Material Symbols
 
 ## Setup
@@ -48,6 +52,21 @@ Responsive web application for managing and viewing snooker tournament schedules
    npm run dev
    ```
 6. Build production bundle:
+4. Run development server:
+   ```bash
+   npm run dev
+   ```
+5. Build production bundle:
+2. Configure admin access code:
+   ```bash
+   cp .env.example .env
+   ```
+   Then edit `VITE_ADMIN_CODE` in `.env`.
+3. Run development server:
+   ```bash
+   npm run dev
+   ```
+4. Build production bundle:
    ```bash
    npm run build
    ```
@@ -58,6 +77,7 @@ Responsive web application for managing and viewing snooker tournament schedules
 - `VITE_SUPABASE_ANON_KEY` supports either a legacy anon JWT or the new Supabase publishable key (`sb_publishable_...`).
 - The app no longer auto-seeds `matches` at runtime, so newly added matches will not be overwritten on refresh.
 - Use `supabase/seed.sql` only once if you want starter sample data.
+- On first run, if the tables are empty, the app seeds example data automatically.
 - The provided SQL enables RLS and creates permissive policies suitable for this simple club app. Tighten these policies before production use.
 
 ## GitHub Pages

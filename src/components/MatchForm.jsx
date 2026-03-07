@@ -24,6 +24,9 @@ export const MatchForm = ({ players, tables, onSubmit, initialValue, submitText 
     setIsSaving(true);
     const result = await onSubmit(draft);
     setIsSaving(false);
+  const handleSubmit = (event) => {
+    event.preventDefault();
+    const result = onSubmit(draft);
     if (!result.ok) {
       setError(result.error);
       return;
@@ -86,6 +89,7 @@ export const MatchForm = ({ players, tables, onSubmit, initialValue, submitText 
         </div>
       </div>
       <button className="btn-primary w-full sm:w-auto" type="submit" disabled={isSaving}>{isSaving ? 'Saving...' : submitText}</button>
+      <button className="btn-primary w-full sm:w-auto" type="submit">{submitText}</button>
     </form>
   );
 };
