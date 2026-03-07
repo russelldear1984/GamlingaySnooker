@@ -15,7 +15,9 @@ export default function App() {
   if (isLoading) {
     return (
       <AppShell>
-        <div className="card p-6 text-sm text-slate-300">Loading tournament data from Supabase...</div>
+        <div className="card p-6 text-sm text-slate-300">
+          Loading tournament data from Supabase...
+        </div>
       </AppShell>
     );
   }
@@ -27,8 +29,7 @@ export default function App() {
           {errorMessage}
         </div>
       )}
-  return (
-    <AppShell>
+
       <Routes>
         <Route path="/" element={<HomePage />} />
         <Route path="/home" element={<HomePage />} />
