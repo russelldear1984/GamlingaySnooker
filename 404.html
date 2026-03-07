@@ -16,6 +16,14 @@
         var target = projectBase + '/?p=' + encodeURIComponent(relativePath + search + hash);
         window.location.replace(target);
       })();
+      // GitHub Pages SPA fallback redirect (project pages)
+      const path = window.location.pathname;
+      const search = window.location.search || '';
+      const hash = window.location.hash || '';
+      const projectBase = '/GamlingaySnooker';
+      const relativePath = path.startsWith(projectBase) ? path.slice(projectBase.length) : path;
+      const target = `${projectBase}/?p=${encodeURIComponent(relativePath + search + hash)}`;
+      window.location.replace(target);
     </script>
   </head>
   <body></body>

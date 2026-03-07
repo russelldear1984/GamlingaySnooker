@@ -8,6 +8,8 @@ export const AdminMatchesPage = () => {
   const [editingPlayerId, setEditingPlayerId] = useState(null);
   const [playerNameDraft, setPlayerNameDraft] = useState('');
   const [playerError, setPlayerError] = useState('');
+  const { matches, players, tables, upsertMatch, deleteMatch } = useApp();
+  const [editingId, setEditingId] = useState(null);
 
   const editingMatch = matches.find((m) => m.id === editingId) || null;
 
@@ -112,6 +114,15 @@ export const AdminMatchesPage = () => {
       </div>
 
       <MatchForm players={players} tables={tables} onSubmit={(draft) => upsertMatch(draft)} submitText="Create match" />
+  return (
+    <section className="space-y-5">
+      <h1 className="text-2xl font-bold">Booking Management</h1>
+      <MatchForm
+        players={players}
+        tables={tables}
+        onSubmit={(draft) => upsertMatch(draft)}
+        submitText="Create match"
+      />
 
       {editingMatch && (
         <MatchForm
@@ -121,6 +132,8 @@ export const AdminMatchesPage = () => {
           initialValue={{ ...editingMatch, tableNumber: String(editingMatch.tableNumber) }}
           onSubmit={async (draft) => {
             const result = await upsertMatch(draft, editingMatch.id);
+          onSubmit={(draft) => {
+            const result = upsertMatch(draft, editingMatch.id);
             if (result.ok) setEditingId(null);
             return result;
           }}
@@ -166,6 +179,14 @@ export const AdminMatchesPage = () => {
                       >
                         Delete
                       </button>
+                  <td className="px-4 py-3">{playersById[match.player1]} vs {playersById[match.player2]}</td>
+                  <td className="px-4 py-3">{match.date}</td>
+                  <td className="px-4 py-3">{match.startTime} - {match.endTime}</td>
+                  <td className="px-4 py-3">{match.tableNumber}</td>
+                  <td className="px-4 py-3">
+                    <div className="flex gap-2">
+                      <button className="btn-secondary px-3 py-1 text-xs" onClick={() => setEditingId(match.id)}>Edit</button>
+                      <button className="rounded-lg border border-rose-500/60 px-3 py-1 text-xs text-rose-300" onClick={() => deleteMatch(match.id)}>Delete</button>
                     </div>
                   </td>
                 </tr>
