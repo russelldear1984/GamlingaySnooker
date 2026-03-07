@@ -51,6 +51,7 @@ export const AppProvider = ({ children }) => {
             seedTables.map((table) => ({ id: table.id, table_number: table.tableNumber })),
             'table_number'
           ),
+          supabaseRest.select('matches', { orderBy: 'date' }),
           loadOrSeed(
             'matches',
             seedMatches.map((match) => ({
