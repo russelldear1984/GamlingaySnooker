@@ -6,8 +6,6 @@ import {
   tables as seedTables
 } from '../data/seedData';
 import { supabaseRest } from '../lib/supabaseClient';
-import { createContext, useContext, useMemo, useState } from 'react';
-import { matches as seedMatches, openingHours as seedHours, players, tables } from '../data/seedData';
 import { compareMatches } from '../utils/dateUtils';
 import { validateMatch } from '../utils/validation';
 
@@ -48,10 +46,12 @@ export const AppProvider = ({ children }) => {
           loadOrSeed('players', initialPlayers, 'name'),
           loadOrSeed(
             'tables',
-            seedTables.map((table) => ({ id: table.id, table_number: table.tableNumber })),
+            seedTables.map((table) => ({
+              id: table.id,
+              table_number: table.tableNumber
+            })),
             'table_number'
           ),
-          supabaseRest.select('matches', { orderBy: 'date' }),
           loadOrSeed(
             'matches',
             seedMatches.map((match) => ({
@@ -80,7 +80,12 @@ export const AppProvider = ({ children }) => {
         ]);
 
         setPlayers(loadedPlayers);
-        setTables(loadedTables.map((table) => ({ ...table, tableNumber: table.table_number ?? table.tableNumber })));
+        setTables(
+          loadedTables.map((table) => ({
+            ...table,
+            tableNumber: table.table_number ?? table.tableNumber
+          }))
+        );
         setMatches(loadedMatches.map(normalizeMatch));
         setOpeningHours(
           loadedOpeningHours.map((day) => ({
@@ -119,7 +124,9 @@ export const AppProvider = ({ children }) => {
     try {
       if (editMatchId) {
         const rows = await supabaseRest.updateEq('matches', 'id', editMatchId, payload);
-        setMatches((prev) => prev.map((match) => (match.id === editMatchId ? normalizeMatch(rows[0]) : match)));
+        setMatches((prev) =>
+          prev.map((match) => (match.id === editMatchId ? normalizeMatch(rows[0]) : match))
+        );
       } else {
         const rows = await supabaseRest.insert('matches', payload);
         setMatches((prev) => [...prev, normalizeMatch(rows[0])]);
@@ -154,7 +161,10 @@ export const AppProvider = ({ children }) => {
         const rows = await supabaseRest.updateEq('players', 'id', id, { name: trimmedName });
         setPlayers((prev) => prev.map((player) => (player.id === id ? rows[0] : player)));
       } else {
-        const rows = await supabaseRest.insert('players', { id: crypto.randomUUID(), name: trimmedName });
+        const rows = await supabaseRest.insert('players', {
+          id: crypto.randomUUID(),
+          name: trimmedName
+        });
         setPlayers((prev) => [...prev, rows[0]]);
       }
       return { ok: true };
@@ -207,40 +217,6 @@ export const AppProvider = ({ children }) => {
     } catch (error) {
       return { ok: false, error: error.message || 'Unable to update opening hours.' };
     }
-export const AppProvider = ({ children }) => {
-  const [matches, setMatches] = useState(seedMatches);
-  const [openingHours, setOpeningHours] = useState(seedHours);
-  const [adminAuthenticated, setAdminAuthenticated] = useState(false);
-
-  const sortedMatches = useMemo(() => [...matches].sort(compareMatches), [matches]);
-
-  const upsertMatch = (draft, editMatchId = null) => {
-    const error = validateMatch({ draft, openingHours, matches, editMatchId });
-    if (error) return { ok: false, error };
-
-    const normalized = {
-      ...draft,
-      id: editMatchId ?? crypto.randomUUID(),
-      tableNumber: Number(draft.tableNumber),
-      status: draft.status || 'Scheduled'
-    };
-
-    setMatches((prev) => {
-      if (editMatchId) {
-        return prev.map((match) => (match.id === editMatchId ? normalized : match));
-      }
-      return [...prev, normalized];
-    });
-
-    return { ok: true };
-  };
-
-  const deleteMatch = (id) => setMatches((prev) => prev.filter((match) => match.id !== id));
-
-  const updateOpeningHour = (dayOfWeek, patch) => {
-    setOpeningHours((prev) =>
-      prev.map((day) => (day.dayOfWeek === dayOfWeek ? { ...day, ...patch } : day))
-    );
   };
 
   const value = {
@@ -257,7 +233,6 @@ export const AppProvider = ({ children }) => {
     updateOpeningHour,
     isLoading,
     errorMessage
-    updateOpeningHour
   };
 
   return <AppContext.Provider value={value}>{children}</AppContext.Provider>;
