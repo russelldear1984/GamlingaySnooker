@@ -1,13 +1,5 @@
 import { isToday } from '../utils/dateUtils';
 
-const hasScore = (match) =>
-  match.player1Score !== null &&
-  match.player1Score !== undefined &&
-  match.player1Score !== '' &&
-  match.player2Score !== null &&
-  match.player2Score !== undefined &&
-  match.player2Score !== '';
-
 export const MatchList = ({ matches, playersById }) => {
   if (!matches.length) {
     return (
@@ -36,11 +28,6 @@ export const MatchList = ({ matches, playersById }) => {
             <h3 className="mt-3 text-lg font-semibold text-white md:text-xl">
               {playersById[match.player1]?.name} vs {playersById[match.player2]?.name}
             </h3>
-            {hasScore(match) && (
-              <p className="mt-2 text-sm font-semibold text-emerald-300">
-                Score: {match.player1Score} - {match.player2Score}
-              </p>
-            )}
             <div className="mt-3 grid gap-2 text-sm text-slate-300 sm:grid-cols-3">
               <p>📅 {match.date}</p>
               <p>🕒 {match.startTime} - {match.endTime}</p>

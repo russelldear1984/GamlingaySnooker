@@ -42,6 +42,16 @@ const performFetch = async ({ url, method, body, forceAuthorization = false }) =
 
   const data = await parsePayload(response);
   return { response, data };
+const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
+
+if (!supabaseUrl || !supabaseAnonKey) {
+  throw new Error('Missing Supabase environment variables. Set VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY.');
+}
+
+const baseHeaders = {
+  apikey: supabaseAnonKey,
+  Authorization: `Bearer ${supabaseAnonKey}`,
+  'Content-Type': 'application/json'
 };
 
 const request = async (path, { method = 'GET', body, query = {} } = {}) => {
@@ -60,6 +70,20 @@ const request = async (path, { method = 'GET', body, query = {} } = {}) => {
     const details = data?.details ? ` ${data.details}` : '';
     const hint = data?.hint ? ` ${data.hint}` : '';
     throw new Error((data?.message || data?.error || `Supabase request failed (${response.status}).`) + details + hint);
+  const response = await fetch(url, {
+    method,
+    headers: {
+      ...baseHeaders,
+      ...(method === 'GET' ? {} : { Prefer: 'return=representation' })
+    },
+    body: body ? JSON.stringify(body) : undefined
+  });
+
+  const text = await response.text();
+  const data = text ? JSON.parse(text) : null;
+
+  if (!response.ok) {
+    throw new Error(data?.message || data?.error || `Supabase request failed (${response.status}).`);
   }
 
   return data;

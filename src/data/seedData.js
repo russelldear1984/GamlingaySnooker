@@ -1,4 +1,5 @@
-const initialPlayers = [
+export const initialPlayers = [
+export const players = [
   { id: 'p1', name: 'Alex Morgan' },
   { id: 'p2', name: 'Jamie Clarke' },
   { id: 'p3', name: 'Riley Singh' },
@@ -7,10 +8,7 @@ const initialPlayers = [
   { id: 'p6', name: 'Jordan Patel' }
 ];
 
-// Backward-compatible alias for older imports.
-const players = initialPlayers;
-
-const tables = [
+export const tables = [
   { id: 't1', tableNumber: 1 },
   { id: 't2', tableNumber: 2 },
   { id: 't3', tableNumber: 3 }
@@ -25,7 +23,7 @@ const addDays = (days) => {
   return formatDate(next);
 };
 
-const matches = [
+export const matches = [
   {
     id: 'm1',
     player1: 'p1',
@@ -61,7 +59,7 @@ const matches = [
   }
 ];
 
-const openingHours = [
+export const openingHours = [
   { dayOfWeek: 0, isOpen: false, openTime: '10:00', closeTime: '22:00' },
   { dayOfWeek: 1, isOpen: true, openTime: '16:00', closeTime: '22:30' },
   { dayOfWeek: 2, isOpen: true, openTime: '16:00', closeTime: '22:30' },
@@ -70,5 +68,3 @@ const openingHours = [
   { dayOfWeek: 5, isOpen: true, openTime: '14:00', closeTime: '23:00' },
   { dayOfWeek: 6, isOpen: true, openTime: '12:00', closeTime: '23:00' }
 ];
-
-export { initialPlayers, players, tables, matches, openingHours };
