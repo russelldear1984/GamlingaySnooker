@@ -33,8 +33,6 @@ create table if not exists public.matches (
   start_time time not null,
   end_time time not null,
   status text not null default 'Scheduled',
-  player1_score integer null check (player1_score >= 0),
-  player2_score integer null check (player2_score >= 0),
   created_at timestamptz not null default now(),
   constraint matches_distinct_players check (player1 <> player2)
 );
@@ -65,8 +63,3 @@ drop policy if exists "public read matches" on public.matches;
 create policy "public read matches" on public.matches for select using (true);
 drop policy if exists "public write matches" on public.matches;
 create policy "public write matches" on public.matches for all using (true) with check (true);
-
-
--- For existing databases created before score fields were added:
-alter table if exists public.matches add column if not exists player1_score integer null check (player1_score >= 0);
-alter table if exists public.matches add column if not exists player2_score integer null check (player2_score >= 0);

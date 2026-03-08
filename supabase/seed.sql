@@ -26,8 +26,8 @@ insert into public.opening_hours (day_of_week, is_open, open_time, close_time) v
 (6, true,  '12:00', '23:00')
 on conflict (day_of_week) do nothing;
 
-insert into public.matches (id, player1, player2, table_number, round, date, start_time, end_time, status, player1_score, player2_score) values
-('m1', 'p1', 'p2', 1, 'Quarter Final', current_date, '18:00', '19:30', 'Scheduled', null, null),
-('m2', 'p3', 'p4', 2, 'Quarter Final', current_date, '19:30', '21:00', 'Scheduled', null, null),
-('m3', 'p5', 'p6', 1, 'Semi Final', current_date + 1, '18:30', '20:00', 'Scheduled', null, null)
+insert into public.matches (id, player1, player2, table_number, round, date, start_time, end_time, status) values
+('m1', 'p1', 'p2', 1, 'Quarter Final', current_date, '18:00', '19:30', 'Scheduled'),
+('m2', 'p3', 'p4', 2, 'Quarter Final', current_date, '19:30', '21:00', 'Scheduled'),
+('m3', 'p5', 'p6', 1, 'Semi Final', current_date + 1, '18:30', '20:00', 'Scheduled')
 on conflict (id) do nothing;

@@ -2,18 +2,14 @@ import { useMemo, useState } from 'react';
 import { MatchForm } from '../components/MatchForm';
 import { useApp } from '../context/AppContext';
 
-const renderScore = (match) => {
-  if (match.player1Score === '' || match.player1Score === null || match.player1Score === undefined) return '-';
-  if (match.player2Score === '' || match.player2Score === null || match.player2Score === undefined) return '-';
-  return `${match.player1Score} - ${match.player2Score}`;
-};
-
 export const AdminMatchesPage = () => {
   const { matches, players, tables, upsertMatch, deleteMatch, upsertPlayer, deletePlayer } = useApp();
   const [editingId, setEditingId] = useState(null);
   const [editingPlayerId, setEditingPlayerId] = useState(null);
   const [playerNameDraft, setPlayerNameDraft] = useState('');
   const [playerError, setPlayerError] = useState('');
+  const { matches, players, tables, upsertMatch, deleteMatch } = useApp();
+  const [editingId, setEditingId] = useState(null);
 
   const editingMatch = matches.find((m) => m.id === editingId) || null;
 
@@ -118,26 +114,26 @@ export const AdminMatchesPage = () => {
       </div>
 
       <MatchForm players={players} tables={tables} onSubmit={(draft) => upsertMatch(draft)} submitText="Create match" />
+  return (
+    <section className="space-y-5">
+      <h1 className="text-2xl font-bold">Booking Management</h1>
+      <MatchForm
+        players={players}
+        tables={tables}
+        onSubmit={(draft) => upsertMatch(draft)}
+        submitText="Create match"
+      />
 
       {editingMatch && (
         <MatchForm
           key={editingMatch.id}
           players={players}
           tables={tables}
-          initialValue={{
-            ...editingMatch,
-            tableNumber: String(editingMatch.tableNumber),
-            player1Score:
-              editingMatch.player1Score === null || editingMatch.player1Score === undefined
-                ? ''
-                : String(editingMatch.player1Score),
-            player2Score:
-              editingMatch.player2Score === null || editingMatch.player2Score === undefined
-                ? ''
-                : String(editingMatch.player2Score)
-          }}
+          initialValue={{ ...editingMatch, tableNumber: String(editingMatch.tableNumber) }}
           onSubmit={async (draft) => {
             const result = await upsertMatch(draft, editingMatch.id);
+          onSubmit={(draft) => {
+            const result = upsertMatch(draft, editingMatch.id);
             if (result.ok) setEditingId(null);
             return result;
           }}
@@ -154,7 +150,6 @@ export const AdminMatchesPage = () => {
                 <th className="px-4 py-3">Date</th>
                 <th className="px-4 py-3">Time</th>
                 <th className="px-4 py-3">Table</th>
-                <th className="px-4 py-3">Score</th>
                 <th className="px-4 py-3">Actions</th>
               </tr>
             </thead>
@@ -169,7 +164,6 @@ export const AdminMatchesPage = () => {
                     {match.startTime} - {match.endTime}
                   </td>
                   <td className="px-4 py-3">{match.tableNumber}</td>
-                  <td className="px-4 py-3">{renderScore(match)}</td>
                   <td className="px-4 py-3">
                     <div className="flex gap-2">
                       <button className="btn-secondary px-3 py-1 text-xs" onClick={() => setEditingId(match.id)} type="button">
@@ -185,6 +179,14 @@ export const AdminMatchesPage = () => {
                       >
                         Delete
                       </button>
+                  <td className="px-4 py-3">{playersById[match.player1]} vs {playersById[match.player2]}</td>
+                  <td className="px-4 py-3">{match.date}</td>
+                  <td className="px-4 py-3">{match.startTime} - {match.endTime}</td>
+                  <td className="px-4 py-3">{match.tableNumber}</td>
+                  <td className="px-4 py-3">
+                    <div className="flex gap-2">
+                      <button className="btn-secondary px-3 py-1 text-xs" onClick={() => setEditingId(match.id)}>Edit</button>
+                      <button className="rounded-lg border border-rose-500/60 px-3 py-1 text-xs text-rose-300" onClick={() => deleteMatch(match.id)}>Delete</button>
                     </div>
                   </td>
                 </tr>
